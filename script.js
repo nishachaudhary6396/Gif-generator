@@ -4,14 +4,16 @@ let apiKey = "JJRG5GVYCkCwaKRPL2t6JulBCSOn2NNc";
 let offset = 0;
 let gifCount = 10;
 
-let generateGif = () => {
+// Default query to load 'laugh' GIFs initially
+let defaultQuery = "laugh";
+
+// Function to generate GIFs
+let generateGif = (query) => {
     let loader = document.querySelector(".loader");
     loader.style.display = "block";
     document.querySelector(".wrapper").style.display = "none";
 
-    let q = document.getElementById("search-box").value;
-
-    let url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q}&limit=${gifCount}&offset=${offset}&rating=g&lang=en`;
+    let url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${query}&limit=${gifCount}&offset=${offset}&rating=g&lang=en`;
 
     fetch(url)
         .then((resp) => resp.json())
@@ -52,17 +54,24 @@ let generateGif = () => {
         });
 };
 
+// Default to search for "laugh" when the page loads
+window.addEventListener("load", () => {
+    document.querySelector("#search-box").value = defaultQuery;
+    generateGif(defaultQuery);
+    addMoreBtn.style.display = "none";
+});
+
+// Event listener for search button
 submitBtn.addEventListener("click", () => {
     offset = 0;
+    let query = document.getElementById("search-box").value || defaultQuery; // Use default "laugh" if no query entered
     document.querySelector(".wrapper").innerHTML = "";
-    generateGif();
+    generateGif(query);
 });
 
+// Event listener for add more button
 addMoreBtn.addEventListener("click", () => {
     offset += gifCount;
-    generateGif();
-});
-
-window.addEventListener("load", () => {
-    addMoreBtn.style.display = "none";
+    let query = document.getElementById("search-box").value || defaultQuery; // Use default "laugh" if no query entered
+    generateGif(query);
 });
